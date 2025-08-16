@@ -1,0 +1,58 @@
+---
+title: "CSU RA Salary Analysis"
+author: "Jaden Clarke"
+date: "2025-08-15"
+output: pdf_document
+---
+# Configure libraries 
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+# Load the Data 
+```{r}
+# save to tibble
+data <- read_csv(r"(C:\Users\SmotP\Downloads\CSU_Compensation_Report.csv)")
+
+
+# filter to only include research assitants
+levels <- c("Research Associate I", "Research Associate II", "Research Associate III")
+data <- data |> 
+  filter(str_detect(`Job Title`, "Research Associate I|Research Associate II|Research Associate III|Research Associate IV")) |>
+  mutate(`Job Title`, as_factor(`Job Title`))|>
+  mutate(Department, as_factor(Department))
+
+```
+
+
+
+# Mean Salary By Position 
+```{r}
+ggplot(data, aes(x = `Job Title`, y = `Annual Salary`, 
+                 fill = `Job Title`)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set3") +
+  theme_minimal()+ 
+  theme(legend.position = c(0, 1), legend.justification = c(0,1))
+```
+# Mean Salary by Department Data
+```{r}
+department_data <- data[data$Department %in% c(
+  "Electrical and Computer Engineering",
+  "Fish, Wildlife and Conservation Biology",
+  "Analytical Resources Core",
+  "Ecosystem Science and Sustainability"
+), ]
+
+
+ggplot(department_data, aes(x = Department, y = `Annual Salary`, 
+                 fill = Department)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal()+ 
+  theme(legend.position = c(1, 0), legend.justification = c(1,0))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+
+```
+
